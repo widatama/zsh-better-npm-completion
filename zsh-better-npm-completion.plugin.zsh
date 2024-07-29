@@ -82,7 +82,7 @@ _zbnc_npm_uninstall_completion() {
   # Return if we can't find package.json
   [[ "$package_json" = "" ]] && return
 
-  _values $(_zbnc_parse_package_json_for_deps "$package_json")
+  _values 'packages' $(_zbnc_parse_package_json_for_deps "$package_json")
 
   # Make sure we don't run default completion
   custom_completion=true
