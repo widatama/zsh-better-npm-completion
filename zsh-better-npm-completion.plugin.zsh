@@ -58,11 +58,14 @@ _zbnc_npm_install_completion() {
   # Only run on `npm install ?`
   [[ ! "$(_zbnc_no_of_npm_args)" = "3" ]] && return
 
-  # Return if we don't have any cached modules
-  [[ "$(_zbnc_list_cached_modules)" = "" ]] && return
+  # Look for a package.json file
+  local package_json="$(_zbnc_recursively_look_for package.json)"
+
+  # Return if we don't have package.json and cached modules
+  [[ "$package_json" = "" ]] && [[ "$(_zbnc_list_cached_modules)" = "" ]] && return
 
   # If we do, recommend them
-  _values $(_zbnc_list_cached_modules)
+  _values 'packages' $(_zbnc_parse_package_json_for_deps "$package_json") -- $(_zbnc_list_cached_modules)
 
   # Make sure we don't run default completion
   custom_completion=true
