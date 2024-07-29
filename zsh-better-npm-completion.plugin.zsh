@@ -11,7 +11,16 @@ _zbnc_no_of_npm_args() {
 }
 
 _zbnc_list_cached_modules() {
-  ls ~/.npm 2>/dev/null
+  # ls ~/.npm 2>/dev/null
+  # npm cache format is like
+  # somethingsomethinghttps://registrydomain/namespace/packagename/-/packagename-version.tgz
+  # first sed will remove from beginning of line to '://'
+  # then grep will remove `%2f`, its duplicate of '/' 
+  # then sed will remove registrydomain
+  # then sed will remove package name and version at the end of the line
+  # finally sort -u to remove duplicates
+  # note that this will not work if the registry domain has subpath
+  npm cache ls | sed -ne 's/^.*http[s?]:\/\///p' | grep -v '%2f' | sed -ne 's/^[^\/]*\///p' | sed -n '/\/-.*\.tgz/ s///p' | sort -u
 }
 
 _zbnc_recursively_look_for() {
